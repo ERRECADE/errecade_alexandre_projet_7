@@ -5,13 +5,14 @@ namespace App\Entity;
 use App\Repository\ClientRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=ClientRepository::class)
  */
-class Client implements UserInterface
+class Client implements UserInterface, PasswordAuthenticatedUserInterface
 {
     use \App\Traits\ActivableBoolean;
     use \App\Traits\Timestampable;
@@ -104,7 +105,7 @@ class Client implements UserInterface
     {
         $roles = $this->roles;
         // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
+        $roles[] = 'ROLE_ADMIN';
 
         return array_unique($roles);
     }
