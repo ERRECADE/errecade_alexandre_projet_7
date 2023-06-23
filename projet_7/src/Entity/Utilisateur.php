@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\UtilisateurRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=UtilisateurRepository::class)
@@ -16,26 +17,31 @@ class Utilisateur
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"getClient"})
      */
     private $id;
 
     /**
      * @ORM\ManyToOne(targetEntity=client::class, inversedBy="utilisateurs")
+     * @Groups({"getClient"})
      */
     private $client;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"getClient", "getUtilisateurDetail"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"getClient", "getUtilisateurDetail"})
      */
     private $prenom;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true, unique = true)
+     * @Groups({"getClient", "getUtilisateurDetail"})
      */
     private $email;
 
