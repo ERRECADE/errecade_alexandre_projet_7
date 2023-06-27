@@ -1,69 +1,94 @@
 <?php
+
 namespace App\Controller;
 
 use App\Entity\Produit;
 use App\Repository\ProduitRepository;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
+use JMS\Serializer\SerializationContext;
+use JMS\Serializer\SerializerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use OpenApi\Annotations as OA;
+use App\Service\DoctrineObjectConstructor;
 
 /**
- * @Route("/api/produit", name="api_produit_")
+ * @Route("/api/produits", name="api_produit_")
  */
 class ProduitController extends AbstractController
 {
     private $serializer;
-    private $produitRepository;
-    public function __construct(SerializerInterface $serializer, ProduitRepository $produitRepository)
+
+    public function __construct(SerializerInterface $serializer)
     {
         $this->serializer = $serializer;
-        $this->produitRepository = $produitRepository;
     }
+
+    
     /**
-     * @Route("/liste", name="liste", methods={"GET"})
-     * Récupération liste produits
+     * @Route("/", name="liste", methods={"GET"})
+     *
+     * @OA\Get(
+     *     path="/api/produits/",
+     *     tags={"Produit"},
+     *     summary="Obtenir la liste des produits",
+     *     @OA\Response(
+     *         response="default",
+     *         description="",
+     *     )
+     * )
      */
-    public function getAllProduit(ProduitRepository $produitRepository): JsonResponse
+    public function getAllProduit(Request $request, TagAwareCacheInterface $tagAwareCacheInterface, ProduitRepository $produitRepository): JsonResponse
     {
-        $produitList = $produitRepository->findAll();
-        if($produitList){
-            $serializedProduitList = [];
-            foreach ($produitList as $produit) {
-                $serializedProduit = [
-                    'id' => $produit->getId(),
-                    'name' => $produit->getName(),
-                ];
-                $serializedProduitList[] = $serializedProduit;
-            }
+        $page = $request->get('page', 1);
+        $limit = $request->get('limit', 3);
+        $idCache = "getAllProduit-" . $page . "-" . $limit;
         
-            $jsonProduitList = $this->serializer->serialize($serializedProduitList, 'json');
+        $produitList = $tagAwareCacheInterface->get($idCache, function (ItemInterface $item) use ($produitRepository, $page, $limit) {
+            $item->tag("produitcache");
+            $item->expiresAfter(10);
+            $list = $produitRepository->findAllProduit($page, $limit);
+            $context = SerializationContext::create()->setGroups(['AllProduit']);
+            $jsonProduitList = $this->serializer->serialize($list, 'json',$context);
+            
             return new JsonResponse($jsonProduitList, Response::HTTP_OK, [], true);
-        }
-        return new JsonResponse("Nous ne trouvons aucun produit.", Response::HTTP_NOT_FOUND);
-
+        });
+        
+        return $produitList ?? new JsonResponse("Nous ne trouvons aucun produit.", Response::HTTP_NOT_FOUND);
     }
 
-    /**
-     * @Route("/detail", name="detail", methods={"POST"})
-     * Récupération d'un seul produits
-     */
-    public function getDetailProduit(Request $request)
-    {
-        $data = json_decode($request->getContent(), true);
-        $id = $data['id'];
-        
+/**
+ * @Route("/{id}", name="detail", methods={"GET"})
+ *
+ * @OA\Get(
+ *     path="/api/produits/{id}",
+ *     tags={"Produit"},
+ *     summary="Obtenir les détails d'un produit"
+ * )
+ */
+    public function getDetailProduit($id, Request $request, TagAwareCacheInterface $tagAwareCacheInterface, ProduitRepository $produitRepository)
+    {    
         if ($id) {
-            $produit =  $this->produitRepository->findOneBy(['id' => $id]);
-            if ($produit) {
-                $jsonProduit = $this->serializer->serialize($produit, 'json');
-                return new JsonResponse($jsonProduit, Response::HTTP_OK, ['accept' => 'json'], true);
-            } else {
-                return new JsonResponse("Le produit n'est pas dans notre base de données.", Response::HTTP_NOT_FOUND);
-            }
+            $idCache = "getDetailProduit-" . $id;
+            
+            $produit = $tagAwareCacheInterface->get($idCache, function (ItemInterface $item) use ($produitRepository, $id) {
+                $item->tag("produitcacheUnique");
+                $item->expiresAfter(10);
+                $produit = $produitRepository->findOneBy(['id' => $id]);
+                if ($produit) {
+                    $jsonProduit = $this->serializer->serialize($produit, 'json');
+                    return new JsonResponse($jsonProduit, Response::HTTP_OK, ['accept' => 'json'], true);
+                }
+                return null;
+            });
+            
+            return $produit ?? new JsonResponse("Le produit n'est pas dans notre base de données.", Response::HTTP_NOT_FOUND);
         }
     }
 }

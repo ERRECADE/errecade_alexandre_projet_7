@@ -22,3 +22,10 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+    # jms_serializer.initialized_object_constructor:
+    #     class: App\Service\InitializedObjectConstructor
+    #     arguments:
+    #         - '@jms_serializer.object_constructor'
+    
+    # jms_serializer.object_constructor:
+    #     alias: jms_serializer.initialized_object_constructor
