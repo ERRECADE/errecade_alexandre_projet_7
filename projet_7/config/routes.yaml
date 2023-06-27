@@ -8,3 +8,23 @@ kernel:
 
 api_login_check:
     path: /api/login_check
+
+detail:
+    path: '/api/produit/{id}'
+    controller: 'App\Controller\ProduitController::getDetailProduit'
+    methods: ['GET']
+
+detail_utilisateur:
+    path: '/api/utilisateurs/{id}'
+    controller: 'App\Controller\UtilisateurController::getUtilisateur'
+    methods: ['GET']
+
+update:
+    path: '/api/utilisateurs/{id}'
+    controller: 'App\Controller\UtilisateurController::updateUtilisateur'
+    methods: ['PUT']
+
+delets:
+    path: '/api/utilisateurs/{id}'
+    controller: 'App\Controller\UtilisateurController::deleteUtilisateur'
+    methods: ['DELETE']

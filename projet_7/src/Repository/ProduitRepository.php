@@ -39,6 +39,16 @@ class ProduitRepository extends ServiceEntityRepository
         }
     }
 
+    public function findAllProduit($page,$limit)
+    {
+        return $this->createQueryBuilder('p')
+        ->setFirstResult(($page - 1) * $limit)
+        ->setMaxResults($limit)
+        ->getQuery()
+        ->getResult();
+    }
+
+
 //    /**
 //     * @return Produit[] Returns an array of Produit objects
 //     */
