@@ -23,7 +23,7 @@ class ExceptionSubscriber implements EventSubscriberInterface
       } else {
             $data = [
                 'status' => 500,
-                'message' => "L'adresse email existe déjà"
+                'message' => $exception->getMessage()
             ];
 
             $event->setResponse(new JsonResponse($data));

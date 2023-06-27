@@ -38,18 +38,19 @@ class UtilisateurRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
-    public function findAllByClient($client): array
+    public function findAllByClient($client ,$page,$limit): array
     {
         return $this->createQueryBuilder('u')
             ->leftJoin('u.client', 'c')
             ->andWhere('c.id = :clientId')
             ->setParameter('clientId', $client)
+            ->setFirstResult(($page - 1) * $limit)
+            ->setMaxResults($limit)
             ->getQuery()
             ->getResult();
     }
     public function findOneByUtilisateur($utilisateur,$client): ?Utilisateur
     {
-
         return $this->createQueryBuilder('u')
         ->andWhere('u.id = :utilisateur')
         ->andWhere('u.client = :client')

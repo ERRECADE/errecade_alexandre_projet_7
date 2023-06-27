@@ -4,9 +4,25 @@ namespace App\Entity;
 
 use App\Repository\ProduitRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Hateoas\Configuration\Annotation as Hateoas;
+use JMS\Serializer\Annotation\Groups;
+use Hateoas\Configuration\Annotation\Relation;
+
+
 
 /**
- * @ORM\Entity(repositoryClass=ProduitRepository::class)
+ * @ORM\Entity(repositoryClass=ProduitRepository::class) 
+ * @Hateoas\Relation(
+ *      "self",
+ *      href = @Hateoas\Route(
+ *          "detail",
+ *          parameters = { "id" = "expr(object.getId())" }
+ *      ),
+ *      exclusion = @Hateoas\Exclusion(groups="AllProduit"),
+ *      attributes = {
+ *          "comment" = "Attention , lors de la redirection , pensez à laisser le GET et a donner l'autorisation bearer token"
+ *      }
+ * )
  */
 class Produit
 {
@@ -14,16 +30,19 @@ class Produit
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"AllProduit"})
      */
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true, unique = true)
+     * @ORM\Column(type="string", length=255, nullable=true, unique=true)
+     * @Groups({"AllProduit"})
      */
     private $name;
 
     /**
-     * @ORM\Column(type="text", nullable=true)
+     * @ORM\Column(type="text", nullable=true)     
+     * @Groups({"AllProduit"})
      */
     private $description;
 
