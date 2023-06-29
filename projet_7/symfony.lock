@@ -1,4 +1,18 @@
 {
+    "api-platform/core": {
+        "version": "2.7",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "2.5",
+            "ref": "05b57782a78c21a664a42055dc11cf1954ca36bb"
+        },
+        "files": [
+            "./config/packages/api_platform.yaml",
+            "./config/routes/api_platform.yaml",
+            "./src/Entity/.gitignore"
+        ]
+    },
     "doctrine/annotations": {
         "version": "1.14",
         "recipe": {
@@ -48,6 +62,18 @@
         "files": [
             "./config/packages/doctrine_migrations.yaml",
             "./migrations/.gitignore"
+        ]
+    },
+    "jms/serializer-bundle": {
+        "version": "5.3",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "main",
+            "version": "4.0",
+            "ref": "cc04e10cf7171525b50c18b36004edf64cb478be"
+        },
+        "files": [
+            "./config/packages/jms_serializer.yaml"
         ]
     },
     "lexik/jwt-authentication-bundle": {
@@ -345,5 +371,17 @@
     },
     "twig/extra-bundle": {
         "version": "v3.6.1"
+    },
+    "willdurand/hateoas-bundle": {
+        "version": "2.5",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "main",
+            "version": "2.0",
+            "ref": "34df072c6edaa61ae19afb2f3a239f272fecab87"
+        },
+        "files": [
+            "./config/packages/bazinga_hateoas.yaml"
+        ]
     }
 }

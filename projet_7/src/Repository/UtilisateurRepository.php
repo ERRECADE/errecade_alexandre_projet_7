@@ -38,7 +38,7 @@ class UtilisateurRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
-    public function findAllByClient($client ,$page,$limit): array
+    public function findAllByClient($client, $page, $limit): array
     {
         return $this->createQueryBuilder('u')
             ->leftJoin('u.client', 'c')
@@ -49,7 +49,7 @@ class UtilisateurRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
-    public function findOneByUtilisateur($utilisateur,$client): ?Utilisateur
+    public function findOneByUtilisateur($utilisateur, $client): ?Utilisateur
     {
         return $this->createQueryBuilder('u')
         ->andWhere('u.id = :utilisateur')
@@ -60,28 +60,28 @@ class UtilisateurRepository extends ServiceEntityRepository
         ->getOneOrNullResult();
     }
 
-//    /**
-//     * @return Utilisateur[] Returns an array of Utilisateur objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('u')
-//            ->andWhere('u.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('u.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    //    /**
+    //     * @return Utilisateur[] Returns an array of Utilisateur objects
+    //     */
+    //    public function findByExampleField($value): array
+    //    {
+    //        return $this->createQueryBuilder('u')
+    //            ->andWhere('u.exampleField = :val')
+    //            ->setParameter('val', $value)
+    //            ->orderBy('u.id', 'ASC')
+    //            ->setMaxResults(10)
+    //            ->getQuery()
+    //            ->getResult()
+    //        ;
+    //    }
 
-//    public function findOneBySomeField($value): ?Utilisateur
-//    {
-//        return $this->createQueryBuilder('u')
-//            ->andWhere('u.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    //    public function findOneBySomeField($value): ?Utilisateur
+    //    {
+    //        return $this->createQueryBuilder('u')
+    //            ->andWhere('u.exampleField = :val')
+    //            ->setParameter('val', $value)
+    //            ->getQuery()
+    //            ->getOneOrNullResult()
+    //        ;
+    //    }
 }

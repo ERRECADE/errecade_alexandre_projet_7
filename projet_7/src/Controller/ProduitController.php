@@ -30,7 +30,7 @@ class ProduitController extends AbstractController
         $this->serializer = $serializer;
     }
 
-    
+
     /**
      * @Route("/", name="liste", methods={"GET"})
      *
@@ -49,34 +49,34 @@ class ProduitController extends AbstractController
         $page = $request->get('page', 1);
         $limit = $request->get('limit', 3);
         $idCache = "getAllProduit-" . $page . "-" . $limit;
-        
+
         $produitList = $tagAwareCacheInterface->get($idCache, function (ItemInterface $item) use ($produitRepository, $page, $limit) {
             $item->tag("produitcache");
             $item->expiresAfter(10);
             $list = $produitRepository->findAllProduit($page, $limit);
             $context = SerializationContext::create()->setGroups(['AllProduit']);
-            $jsonProduitList = $this->serializer->serialize($list, 'json',$context);
-            
+            $jsonProduitList = $this->serializer->serialize($list, 'json', $context);
+
             return new JsonResponse($jsonProduitList, Response::HTTP_OK, [], true);
         });
-        
+
         return $produitList ?? new JsonResponse("Nous ne trouvons aucun produit.", Response::HTTP_NOT_FOUND);
     }
 
-/**
- * @Route("/{id}", name="detail", methods={"GET"})
- *
- * @OA\Get(
- *     path="/api/produits/{id}",
- *     tags={"Produit"},
- *     summary="Obtenir les détails d'un produit"
- * )
- */
+    /**
+     * @Route("/{id}", name="detail", methods={"GET"})
+     *
+     * @OA\Get(
+     *     path="/api/produits/{id}",
+     *     tags={"Produit"},
+     *     summary="Obtenir les détails d'un produit"
+     * )
+     */
     public function getDetailProduit($id, Request $request, TagAwareCacheInterface $tagAwareCacheInterface, ProduitRepository $produitRepository)
-    {    
+    {
         if ($id) {
             $idCache = "getDetailProduit-" . $id;
-            
+
             $produit = $tagAwareCacheInterface->get($idCache, function (ItemInterface $item) use ($produitRepository, $id) {
                 $item->tag("produitcacheUnique");
                 $item->expiresAfter(10);
@@ -87,7 +87,7 @@ class ProduitController extends AbstractController
                 }
                 return null;
             });
-            
+
             return $produit ?? new JsonResponse("Le produit n'est pas dans notre base de données.", Response::HTTP_NOT_FOUND);
         }
     }

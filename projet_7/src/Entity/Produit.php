@@ -8,10 +8,8 @@ use Hateoas\Configuration\Annotation as Hateoas;
 use JMS\Serializer\Annotation\Groups;
 use Hateoas\Configuration\Annotation\Relation;
 
-
-
 /**
- * @ORM\Entity(repositoryClass=ProduitRepository::class) 
+ * @ORM\Entity(repositoryClass=ProduitRepository::class)
  * @Hateoas\Relation(
  *      "self",
  *      href = @Hateoas\Route(
@@ -41,7 +39,7 @@ class Produit
     private $name;
 
     /**
-     * @ORM\Column(type="text", nullable=true)     
+     * @ORM\Column(type="text", nullable=true)
      * @Groups({"AllProduit"})
      */
     private $description;

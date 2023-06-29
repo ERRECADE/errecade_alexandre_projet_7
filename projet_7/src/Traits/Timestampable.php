@@ -9,28 +9,28 @@ use JMS\Serializer\Annotation as Serializer;
 
 trait Timestampable
 {
-  /**
-   * @ORM\Column(type="datetime",nullable=true)
-   *  @Gedmo\Timestampable(on="create")
-   * @Serializer\Expose
-   * @Serializer\MaxDepth(1)
-   *
-   */
+    /**
+     * @ORM\Column(type="datetime",nullable=true)
+     *  @Gedmo\Timestampable(on="create")
+     * @Serializer\Expose
+     * @Serializer\MaxDepth(1)
+     *
+     */
     protected $createdAt;
 
-  /**
-   * @ORM\Column(type="datetime",nullable=true)
-   *  @Gedmo\Timestampable(on="update")
-   * @Serializer\Expose
-   * @Serializer\MaxDepth(1)
-   *
-   */
+    /**
+     * @ORM\Column(type="datetime",nullable=true)
+     * @Gedmo\Timestampable(on="update")
+     * @Serializer\Expose
+     * @Serializer\MaxDepth(1)
+     *
+     */
     protected $updatedAt;
 
-  /**
-   * @param \DateTime $createdAt
-   * @return mixed
-   */
+    /**
+     * @param \DateTime $createdAt
+     * @return mixed
+     */
     public function setCreatedAt(\DateTime $createdAt)
     {
         $this->createdAt = $createdAt;
@@ -38,18 +38,18 @@ trait Timestampable
         return $this;
     }
 
-  /**
-   * @return mixed
-   */
+    /**
+     * @return mixed
+     */
     public function getCreatedAt()
     {
         return $this->createdAt;
     }
 
-  /**
-   * @param \DateTime $updatedAt
-   * @return mixed
-   */
+    /**
+     * @param \DateTime $updatedAt
+     * @return mixed
+     */
     public function setUpdatedAt(\DateTime $updatedAt)
     {
         $this->updatedAt = $updatedAt;
@@ -57,9 +57,9 @@ trait Timestampable
         return $this;
     }
 
-  /**
-   * @return mixed
-   */
+    /**
+     * @return mixed
+     */
     public function getUpdatedAt()
     {
         return $this->updatedAt;

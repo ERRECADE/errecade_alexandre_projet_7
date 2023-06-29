@@ -47,5 +47,8 @@ nelmio_api_doc:
                     in: header
                     name: Authorization
     areas:
-        path_patterns:
-            - '^/api(?!/doc$)'
+        default:
+            path_patterns:
+                - '^/api/produit'
+                - '^/api/utilisateurs'
+                - '^/user'
