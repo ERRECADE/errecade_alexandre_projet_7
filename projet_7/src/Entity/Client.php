@@ -12,7 +12,6 @@ use JMS\Serializer\Annotation\Groups;
 use Hateoas\Configuration\Annotation as Hateoas;
 use Hateoas\Configuration\Annotation\Relation;
 
-
 /**
  * @ORM\Entity(repositoryClass=ClientRepository::class)
  */
@@ -85,7 +84,7 @@ class Client implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
-        /**
+    /**
      * A visual identifier that represents this user.
      *
      * @see UserInterface
@@ -137,7 +136,7 @@ class Client implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-        /**
+    /**
      * Returning a salt is only needed, if you are not using a modern
      * hashing algorithm (e.g. bcrypt or sodium) in your security.yaml.
      *

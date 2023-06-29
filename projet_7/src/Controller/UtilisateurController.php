@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Controller;
 
 use DateTime;
@@ -37,7 +38,7 @@ class UtilisateurController extends AbstractController
     private $validator;
 
 
-    public function __construct(Security $security, ClientRepository $clientRepository,SerializerInterface $serializer, ValidatorInterface $validator)
+    public function __construct(Security $security, ClientRepository $clientRepository, SerializerInterface $serializer, ValidatorInterface $validator)
     {
         $this->security = $security;
         $this->clientRepository = $clientRepository;
@@ -72,11 +73,11 @@ class UtilisateurController extends AbstractController
             $page = $request->get('page', 1);
             $limit = $request->get('limit', 3);
             $cacheKey = 'getUtilisateurFromClient-' . $idClient->getId() . '_' . $page . '_' . $limit;
-    
+
             $utilisateurList = $tagAwareCacheInterface->get($cacheKey, function (ItemInterface $item) use ($utilisateurRepository, $client, $page, $limit) {
-                $item->expiresAfter(1); 
+                $item->expiresAfter(1);
                 $item->tag('utilisateursCacheGlobal');
-    
+
                 $utilisateurs = $utilisateurRepository->findAllByClient($client, $page, $limit);
                 $context = SerializationContext::create()->setGroups(['getClient']);
 
@@ -87,7 +88,7 @@ class UtilisateurController extends AbstractController
             return $utilisateurList ?? new JsonResponse("Le client n'existe pas, il ne possède donc aucun utilisateur", Response::HTTP_NOT_FOUND);
 
         }
-    
+
         return new JsonResponse("Le client n'existe pas, il ne possède donc aucun utilisateur", Response::HTTP_NOT_FOUND);
     }
 
@@ -119,24 +120,24 @@ class UtilisateurController extends AbstractController
     public function getUtilisateurDetail($id, Request $request, TagAwareCacheInterface $tagAwareCacheInterface, UtilisateurRepository $utilisateurRepository)
     {
         $client = $this->security->getUser();
-  
+
         if ($client) {
             $cacheKey = 'getUtilisateur-' . $id;
-    
+
             $utilisateurList = $tagAwareCacheInterface->get($cacheKey, function (ItemInterface $item) use ($utilisateurRepository, $id, $client) {
                 $item->expiresAfter(1);
                 $item->tag('utilisateursCacheDetail');
-    
+
                 $utilisateur = $utilisateurRepository->findOneByUtilisateur($id, $client);
                 if ($utilisateur) {
                     $context = SerializationContext::create()->setGroups(['getUtilisateurDetail']);
                     $jsonUtilisateur = $this->serializer->serialize($utilisateur, 'json', $context);
                     return new JsonResponse($jsonUtilisateur, Response::HTTP_OK, ['accept' => 'json'], true);
                 }
-    
+
                 return null;
             });
-    
+
             return $utilisateurList ?? new JsonResponse("Utilisateur non trouvé.", Response::HTTP_NOT_FOUND);
 
         }
@@ -149,6 +150,7 @@ class UtilisateurController extends AbstractController
      *     path="/api/utilisateurs/{id}",
      *     tags={"Utilisateur"},
      *     summary="Supprimer un utilisateur",
+     * )
      */
     public function deleteUtilisateur($id, Request $request, UtilisateurRepository $utilisateurRepository)
     {
@@ -156,7 +158,7 @@ class UtilisateurController extends AbstractController
         if ($id) {
             $utilisateur = $utilisateurRepository->findOneByUtilisateur($id, $client);
             if ($utilisateur) {
-                $utilisateurRepository->remove($utilisateur,true);
+                $utilisateurRepository->remove($utilisateur, true);
                 return new JsonResponse(null, Response::HTTP_NO_CONTENT);
             } else {
                 return new JsonResponse("Utilisateur non trouvé.", Response::HTTP_NOT_FOUND);
@@ -164,27 +166,27 @@ class UtilisateurController extends AbstractController
         }
     }
 
-/**
- * @Route("/", name="create", methods={"POST"})
- * @OA\Post(
- *     path="/api/utilisateurs",
- *     tags={"Utilisateur"},
- *     summary="Créer un nouvel utilisateur",
- *     @OA\Response(
- *         response=201,
- *         description="Utilisateur créé"
- *     ),
- *     @OA\Response(
- *         response=400,
- *         description="Mauvaise requête",
- *         @OA\JsonContent(
- *             type="array",
- *             @OA\Items(ref="#/components/schemas/ConstraintViolation")
- *         )
- *     )
- * )
- */
-    public function createUtilisateur(Request $request,UtilisateurRepository $utilisateurRepository): JsonResponse 
+    /**
+     * @Route("/", name="create", methods={"POST"})
+     * @OA\Post(
+     *     path="/api/utilisateurs",
+     *     tags={"Utilisateur"},
+     *     summary="Créer un nouvel utilisateur",
+     *     @OA\Response(
+     *         response=201,
+     *         description="Utilisateur créé"
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Mauvaise requête",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(ref="#/components/schemas/ConstraintViolation")
+     *         )
+     *     )
+     * )
+     */
+    public function createUtilisateur(Request $request, UtilisateurRepository $utilisateurRepository): JsonResponse
     {
         $utilisateur = $this->serializer->deserialize($request->getContent(), Utilisateur::class, 'json');
         $emailClient = $this->security->getUser()->getUserIdentifier();
@@ -195,13 +197,13 @@ class UtilisateurController extends AbstractController
         $utilisateur->setClient($this->clientRepository->findOneBy(["email" => $emailClient]));
         $utilisateur->setActif(1);
         $utilisateur->setIsDeleted(0);
-        $utilisateur->setCreatedAt(new DateTime);
-        $utilisateurRepository->add($utilisateur,true);
+        $utilisateur->setCreatedAt(new DateTime());
+        $utilisateurRepository->add($utilisateur, true);
 
         $context = SerializationContext::create()->setGroups(['getUtilisateurDetail']);
-        $jsonUtilisateur = $this->serializer->serialize($utilisateur, 'json',$context);
-        return new JsonResponse($jsonUtilisateur, Response::HTTP_CREATED ,['accept' => 'json'], true);
-   }
+        $jsonUtilisateur = $this->serializer->serialize($utilisateur, 'json', $context);
+        return new JsonResponse($jsonUtilisateur, Response::HTTP_CREATED, ['accept' => 'json'], true);
+    }
 
     /**
      * @Route("/{id}", name="update", methods={"PUT"})
@@ -221,21 +223,22 @@ class UtilisateurController extends AbstractController
             return new JsonResponse("Utilisateur non trouvé.", Response::HTTP_NOT_FOUND);
         }
 
-        $context = new DeserializationContext();
-        $context->setAttribute('target', $utilisateur);
+        $jsonContent = $request->getContent();
+        $updatedUtilisateur = $this->serializer->deserialize($jsonContent, Utilisateur::class, 'json');
 
-        $updatedUtilisateur = $this->serializer->deserialize(
-            $request->getContent(),
-            Utilisateur::class,
-            'json',
-            $context
-        );
+        if ($updatedUtilisateur instanceof Utilisateur) {
+            $utilisateur->setUpdatedAt(new DateTime());
+            $utilisateur->setName($updatedUtilisateur->getName());
+            $utilisateur->setPrenom($updatedUtilisateur->getPrenom());
 
-        $updatedUtilisateur->setUpdatedAt(new DateTime);
-        $utilisateurRepository->add($updatedUtilisateur, true);
+            $utilisateurRepository->add($utilisateur, true);
 
-        $context = SerializationContext::create()->setGroups(['getUtilisateurDetail']);
-        $jsonUtilisateur = $this->serializer->serialize($updatedUtilisateur, 'json', $context);
-        return new JsonResponse($jsonUtilisateur, Response::HTTP_OK, ['accept' => 'json'], true);
+            $context = SerializationContext::create()->setGroups(['getUtilisateurDetail']);
+            $jsonUtilisateur = $this->serializer->serialize($utilisateur, 'json', $context);
+
+            return new JsonResponse($jsonUtilisateur, Response::HTTP_OK, ['Content-Type' => 'application/json'], true);
+        } else {
+            return new JsonResponse("Erreur lors de la désérialisation de l'utilisateur.", Response::HTTP_BAD_REQUEST);
+        }
     }
 }

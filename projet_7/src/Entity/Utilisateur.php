@@ -10,9 +10,8 @@ use JMS\Serializer\Annotation\Groups;
 use Hateoas\Configuration\Annotation as Hateoas;
 use Hateoas\Configuration\Annotation\Relation;
 
-
 /**
- * @ORM\Entity(repositoryClass=UtilisateurRepository::class) 
+ * @ORM\Entity(repositoryClass=UtilisateurRepository::class)
  * @Hateoas\Relation(
  *      "self",
  *      href = @Hateoas\Route(
@@ -23,7 +22,7 @@ use Hateoas\Configuration\Annotation\Relation;
  *      attributes = {
  *          "comment" = "Lors de la redirection, Utiliser le POST pour voir le détail, PUT pour l'update enfin DELETE pour suprimez , pensez a mettre votre token !"
  *      }
- * ) 
+ * )
  */
 class Utilisateur
 {
